@@ -91,10 +91,10 @@ public final class MecanumDrive {
         public double headingVelGain = 0.0; // shared with turn
 
         // drive motor setup
-        public String leftFrontDriveName = "back_left_motor";
-        public String leftBackDriveName = "front_left_motor";
-        public String rightFrontDriveName = "front_right_motor";
-        public String rightBackDriveName = "back_right_motor";
+        public String leftFrontDriveName = "front_left";
+        public String leftBackDriveName = "back_left";
+        public String rightFrontDriveName = "front_right";
+        public String rightBackDriveName = "back_right";
 
         public DcMotorSimple.Direction leftFrontDriveDirection = DcMotorSimple.Direction.REVERSE;
         public DcMotorSimple.Direction leftBackDriveDirection = DcMotorSimple.Direction.REVERSE;
