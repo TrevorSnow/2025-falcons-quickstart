@@ -2,17 +2,21 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.configuration.annotations.ServoType;
 import com.sun.source.tree.IfTree;
 
 @TeleOp
 public class FalconsTeleOp extends LinearOpMode {
     //Initialize motors, servos, sensors, imus, etc.
-    DcMotorEx motorLF, motorRF, motorLB, motorRB, arm;
+    DcMotorEx motorLF, motorRF, motorLB, motorRB, motorArm, motorSlide;
     // TODO: Uncomment the following line if you are using servos
-    //Servo Claw;
+    Servo servoWrist;
+    CRServo servoWheel1, servoWheel2;
+    double servoWristPosition, servoWheelPower;
     public static MecanumDrive.Params DRIVE_PARAMS = new MecanumDrive.Params();
 
 
@@ -27,11 +31,15 @@ public class FalconsTeleOp extends LinearOpMode {
         motorRF = (DcMotorEx) hardwareMap.dcMotor.get(DRIVE_PARAMS.rightFrontDriveName);
         motorRB = (DcMotorEx) hardwareMap.dcMotor.get(DRIVE_PARAMS.rightBackDriveName);
 
-        arm = (DcMotorEx) hardwareMap.dcMotor.get("arm");
+        motorArm = (DcMotorEx) hardwareMap.dcMotor.get("Wormgear");
+        motorSlide = (DcMotorEx) hardwareMap.dcMotor.get("Slide");
 
         // Use the following line as a template for defining new servos
         //Claw = (Servo) hardwareMap.servo.get("claw");
+        servoWheel1 = (CRServo) hardwareMap.servo.get("Wheel1");
+        servoWheel2 = (CRServo) hardwareMap.servo.get("Wheel2");
 
+        servoWrist = (Servo) hardwareMap.servo.get("Wrist");
 
         //Set them to the correct modes
         //This reverses the motor direction
@@ -100,15 +108,33 @@ public class FalconsTeleOp extends LinearOpMode {
             motorRF.setPower(powerRF);
             motorRB.setPower(powerRB);
 
-        //    if(gamepad2.right_trigger >0){
-          //      arm.setPower(gamepad2.right_trigger);
-        //    } else if (gamepad1.left_trigger >0) {
-          //      arm.setPower(gamepad2.left_trigger * -1);
-        //    } else {
-          //          arm.setPower(0);
-        //        }
-          //  }
-            arm.setPower(gamepad2.right_stick_y*-1);
+
+
+            // Operator Controls
+            motorArm.setPower(gamepad2.right_stick_y*-1);
+            motorSlide.setPower(gamepad2.right_stick_y*-1);
+
+            // Wrist Controls
+            if (gamepad2.left_trigger > 0)
+                servoWristPosition -= .20;
+            else if (gamepad2.right_trigger > 0)
+                servoWristPosition += .20;
+
+            servoWrist.setPosition(servoWristPosition);
+
+            telemetry.addData("ServoPosition", servoWristPosition);
+            telemetry.addData("PhysicalServoPosition", servoWrist.getPosition());
+
+            // Claw Controls
+            if (gamepad2.left_bumper)
+                servoWheelPower = .20;
+            else if (gamepad2.right_bumper)
+                servoWheelPower = -.20;
+            else
+                servoWheelPower = 0.0;
+
+            servoWheel1.setPower(servoWheelPower);
+            servoWheel2.setPower(servoWheelPower);
 
             // If you want to print information to the Driver Station, use telemetry
             // addData() lets you give a string which is automatically followed by a ":" when printed
@@ -116,7 +142,7 @@ public class FalconsTeleOp extends LinearOpMode {
             // update() only needs to be run once and will "push" all of the added data
 
             //telemetry.addData("Label", "Information");
-            telemetry.addData("Arm power", arm.getPower());
+
             telemetry.update();
 
         } // opModeActive loop ends
