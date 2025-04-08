@@ -134,7 +134,7 @@ public class FalconsTeleOp extends LinearOpMode {
                 servoWheelPower = 0.0;
 
             servoWheel1.setPower(servoWheelPower);
-            servoWheel2.setPower(servoWheelPower);
+            servoWheel2.setPower(servoWheelPower*-1);
 
             // If you want to print information to the Driver Station, use telemetry
             // addData() lets you give a string which is automatically followed by a ":" when printed
